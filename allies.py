@@ -47,11 +47,21 @@ for i in circles[0,:]:
 print("_____________________________________")
 print(circles)
 '''
-h_m = img[62:79, 13:61]
+#h_m = img[62:79, 13:61]
+h_m = img[62:79, 78:126]
 h_m_hsv = cv2.cvtColor(h_m, cv2.COLOR_BGR2HSV)
+#################thresholding to get the bars##################
 h_m_health = cv2.inRange(h_m_hsv, (30, 127, 0),(90, 255, 255)) 
 h_m_mana = cv2.inRange(h_m_hsv, (90, 127, 0),(150, 255, 255))
-
+#################calculate the percentage####################
+h_perc = cv2.mean(h_m_health)[0]
+m_perc = cv2.mean(h_m_mana)[0]
+print("###############")
+print('Health Value', ': ')
+print(h_perc)
+print('Mana Value', ': ')
+print(m_perc)
+print("###############")
 plt.figure()
 plt.imshow(h_m_health)
 
@@ -61,4 +71,6 @@ plt.imshow(h_m_mana)
 plt.figure()
 plt.imshow(h_m)
 
+plt.figure()
+plt.imshow(img)
 plt.show()
