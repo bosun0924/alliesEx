@@ -1,6 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import pytesseract
 
 def allies_region(image, mini_map): 
     #get the resolution of the image
@@ -33,7 +34,7 @@ class ally:
 
 mini_map = [1655,814,1907,1066]#map location 100%
 #mini_map = [1720,880,1910,1069]#map location 0%
-imag = cv2.imread('./test3.png')
+imag = cv2.imread('./test.png')
 img = cv2.resize(imag, (1920, 1080))
 img_cropped = allies_region(img, mini_map)
 gray_img_cropped = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2GRAY)
@@ -42,7 +43,8 @@ himg = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 cir_rad = int((mini_map[3]-mini_map[1])/9)
 circles = cv2.HoughCircles(gray_img_cropped,cv2.HOUGH_GRADIENT,1,45,param1=25,param2=17,minRadius=(cir_rad - 2),maxRadius=(cir_rad + 2))
 circles = np.uint16(np.around(circles))
-
+print("_____________________________________")
+print(circles)
 #Crop the allies out according to the circle detection results
 allies = []
 for i in circles[0,:]:
@@ -51,17 +53,21 @@ for i in circles[0,:]:
     # draw the center of the circle
     cv2.circle(img,(i[0],i[1]),2,(0,0,255),3)
     # save the area to be an Ally list
-    mask = np.zeros_like(himg)
-    area = [(i[0],i[1]),(i[0]+i[2],i[1]),(i[0]+i[2],i[1]+i[2]),(i[0],i[1]+i[2]),]
-    crop_area = np.array([area], np.int32)
-    cv2.fillPoly(mask, crop_area, (255,255,255))
-    allies.append(cv2.bitwise_and(himg, mask))
+    area = himg[i[1]:i[1]+i[2], i[0]:i[0]+i[2]]
+    #area = [(i[0],i[1]),(i[0]+i[2],i[1]),(i[0]+i[2],i[1]+i[2]),(i[0],i[1]+i[2]),]
+    #allies.append(cv2.bitwise_and(himg, mask))
+    allies.append([i[0],i[1],i[2],area])
 
 #Extract the number picture out of the ROI(region of interest)
-
-
-print("_____________________________________")
-print(circles)
+#In the HSV space, the exp font is in range (0,0,118) to (180, 28, 255)
+font_low = (0,0,118)
+font_high = (90,20,255)
+allies_c = allies.copy()
+for i in range(4):
+    allies_c[i][3] = cv2.inRange(allies_c[i][3], font_low, font_high)
+    height, width = allies_c[i][3].shape()
+    allies_c[i][3] = cv2.resize(allies_c[i][3],(height*4, width*4))
+    print(pytesseract.image_to_string(allies_c[i][3]))
 
 '''
 #############################################################
@@ -98,6 +104,10 @@ plt.imshow(img)
 
 for i in range(4):
     plt.figure()
-    plt.imshow(allies[i])
+    plt.imshow(allies[i][3])
+
+for i in range(4):
+    plt.figure()
+    plt.imshow(allies_c[i][3])
 plt.show()
 
