@@ -23,7 +23,7 @@ regr = linear_model.LinearRegression()
 X_test = np.array([1690,847,1909,1068,46.77,1920,1080])
 X_test = X_test.reshape(1, -1)
 X_train = np.array([[1720,880,1910,1069,0,1920,1080],[1655,814,1907,1066,100,1920,1080]])
-y_train = np.array([[1729,853,1766,865,49],[1668,778,1716,795,65]])
+y_train = np.array([[41,40,49],[54,51,65]])
 # Train the model using the training sets
 regr.fit(X_train, y_train)
 
@@ -32,4 +32,4 @@ y_pred = regr.predict(X_test)
 
 # The coefficients
 print('Coefficients: \n', regr.coef_)
-print(int(y_pred))
+print(y_pred)
