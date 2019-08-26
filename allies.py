@@ -1,7 +1,6 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import pytesseract
 
 #mini_map = [1655,814,1907,1066]#map location 100%
 mini_map = [1720,880,1910,1069]#map location 0%
@@ -56,7 +55,6 @@ for i in range(4):
     height, width = allies_c[i][3].shape
     allies_c[i][3] = cv2.resize(allies_c[i][3],(height*4, width*4))
     cv2.imwrite('train.png',allies_c[i][3])
-    print(pytesseract.image_to_string(allies_c[i][3]))
 #'''
 '''
 #############################################################
